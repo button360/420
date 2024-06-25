@@ -11,6 +11,9 @@
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         header {
             background-color: #4CAF50;
@@ -34,6 +37,7 @@
             color: black;
         }
         .container {
+            flex: 1;
             margin: 20px auto;
             max-width: 1200px;
             padding: 0 20px;
@@ -55,9 +59,7 @@
             color: white;
             text-align: center;
             padding: 10px 0;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
+            margin-top: auto;
         }
         .testimonial {
             background-color: #e9e9e9;
@@ -144,6 +146,63 @@
             background-color: #e9e9e9;
             margin: 0;
         }
+        .blog {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .blog-post {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .testimonial-carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+        .testimonial-carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .testimonial-carousel-inner .testimonial {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        .carousel-buttons button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .carousel-buttons button:hover {
+            background-color: #45a049;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
     <script>
         function togglePopup() {
@@ -164,6 +223,28 @@
         function toggleFAQ(event) {
             var faqAnswer = event.nextElementSibling;
             faqAnswer.style.display = faqAnswer.style.display === "block" ? "none" : "block";
+        }
+        function nextTestimonial() {
+            var carouselInner = document.querySelector('.testimonial-carousel-inner');
+            var testimonials = document.querySelectorAll('.testimonial-carousel-inner .testimonial');
+            var currentIndex = Array.from(testimonials).findIndex(testimonial => {
+                return testimonial.style.transform === 'translateX(-100%)';
+            });
+            var nextIndex = (currentIndex + 1) % testimonials.length;
+            testimonials.forEach((testimonial, index) => {
+                testimonial.style.transform = `translateX(-${nextIndex * 100}%)`;
+            });
+        }
+        function prevTestimonial() {
+            var carouselInner = document.querySelector('.testimonial-carousel-inner');
+            var testimonials = document.querySelectorAll('.testimonial-carousel-inner .testimonial');
+            var currentIndex = Array.from(testimonials).findIndex(testimonial => {
+                return testimonial.style.transform === 'translateX(-100%)';
+            });
+            var prevIndex = (currentIndex - 1 + testimonials.length) % testimonials.length;
+            testimonials.forEach((testimonial, index) => {
+                testimonial.style.transform = `translateX(-${prevIndex * 100}%)`;
+            });
         }
     </script>
 </head>
@@ -232,11 +313,22 @@
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
                 </div>
             </div>
-            <div class="testimonial">
-                <p>"Example Company provided us with outstanding service and support. We highly recommend them!" - Jane Doe</p>
-            </div>
-            <div class="testimonial">
-                <p>"Their expertise and professionalism are unmatched. Our go-to company for all our needs." - John Smith</p>
+            <div class="testimonial-carousel">
+                <div class="testimonial-carousel-inner">
+                    <div class="testimonial">
+                        <p>"Example Company provided us with outstanding service and support. We highly recommend them!" - Jane Doe</p>
+                    </div>
+                    <div class="testimonial">
+                        <p>"Their expertise and professionalism are unmatched. Our go-to company for all our needs." - John Smith</p>
+                    </div>
+                    <div class="testimonial">
+                        <p>"A wonderful experience from start to finish. Their attention to detail is impressive." - Sarah Johnson</p>
+                    </div>
+                </div>
+                <div class="carousel-buttons">
+                    <button onclick="prevTestimonial()">&#10094;</button>
+                    <button onclick="nextTestimonial()">&#10095;</button>
+                </div>
             </div>
             <div class="team">
                 <div class="member">
@@ -269,12 +361,18 @@
             <h2>Contact Us</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
             <form action="#" method="post">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="4" required></textarea>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
                 <button type="submit">Send</button>
             </form>
         </section>
@@ -286,6 +384,23 @@
                 <img src="https://via.placeholder.com/150" alt="Gallery Image 3">
                 <img src="https://via.placeholder.com/150" alt="Gallery Image 4">
                 <img src="https://via.placeholder.com/150" alt="Gallery Image 5">
+            </div>
+        </section>
+        <section id="blog">
+            <h2>Blog</h2>
+            <div class="blog">
+                <div class="blog-post">
+                    <h3>Blog Post 1</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
+                </div>
+                <div class="blog-post">
+                    <h3>Blog Post 2</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
+                </div>
+                <div class="blog-post">
+                    <h3>Blog Post 3</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.</p>
+                </div>
             </div>
         </section>
         <section id="faq">
